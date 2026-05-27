@@ -17,25 +17,19 @@ public class Program
 
         while (true)
         {
-            // PROMPT
-            Console.Write("shy> ");
+            // PROMPT USER
+            PrintPrompt();
 
-            // READ
-            var prompt = Console.ReadLine()?.Trim();
-            if (string.IsNullOrWhiteSpace(prompt))
-            {
-                continue;
-            }
-
-            // TODO: tokenize command and arguments
-            var promptTokens = prompt.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
-            var command = promptTokens[0];
-
+            // READ HIS INPUT
+            var (commandName, commandArgs) = ReadUserInput();
+            
             // EVAL
-            var builtinCommand = BuiltinCommandsRegistry.GetCommandByName(command);
+
+            // check if command is a builtin command
+            var builtinCommand = BuiltinCommandsRegistry.GetCommandByName(commandName);
             if (builtinCommand != null)
             {
-                var commandResult = builtinCommand.Execute(promptTokens[1..]);
+                var commandResult = builtinCommand.Execute(commandArgs);
 
                 if (commandResult.PostAction == PostCommandAction.ExitShell)
                     break;
@@ -46,17 +40,34 @@ public class Program
                 continue;
             }
 
-            var executablePath = ExecutableProvider.FindExecutablePathByName(command);
+            // check if command is an executable in PATH
+            var executablePath = ExecutableProvider.FindExecutablePathByName(commandName);
             if (!string.IsNullOrWhiteSpace(executablePath))
             {
-                var commandArgs = promptTokens[1..];
-                RunProgram(command, commandArgs, executablePath);
+                RunProgram(commandName, commandArgs, executablePath);
 
                 continue;
             }
 
-            Console.WriteLine($"{command}: command not found");
+            // report command not found
+            Console.WriteLine($"{commandName}: command not found");
         }
+    }
+
+    private static void PrintPrompt() => Console.Write("shy> ");
+
+    private static (string command, string[] args) ReadUserInput()
+    {
+        var userCommand = Console.ReadLine()?.Trim();
+        if (string.IsNullOrWhiteSpace(userCommand))
+        {
+            return (string.Empty, []);
+        }
+
+        // TODO: tokenize command and arguments
+        var commandTokens = userCommand.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+        return (commandTokens[0], commandTokens[1..]);
     }
 
     private static void RunProgram(string command, string[] args, string executablePath)
