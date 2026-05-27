@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
-using Microsoft.VisualBasic;
 
 namespace Shy;
 
@@ -20,11 +20,14 @@ public class Program
             Console.Write("shy> ");
 
             // READ
-            var command = Console.ReadLine();
+            var command = Console.ReadLine()?.Trim();
             if (string.IsNullOrWhiteSpace(command))
             {
                 continue;
             }
+            
+            // TODO: tokenize command and arguments
+            var commandParts = command.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
             // EVAL
             if (command == "exit")
@@ -58,14 +61,38 @@ public class Program
                     continue;
                 }
 
-                var executableFile = FindExecutableByName(typeCommand);
-                if (!string.IsNullOrWhiteSpace(executableFile))
+                var executable = FindExecutableByName(typeCommand);
+                if (!string.IsNullOrWhiteSpace(executable))
                 {
-                    Console.WriteLine($"{typeCommand} is {executableFile}");
+                    Console.WriteLine($"{typeCommand} is {executable}");
                     continue;
                 }
 
                 Console.WriteLine($"{typeCommand}: not found");
+            }
+
+            var executableCommand = FindExecutableByName(commandParts[0]);
+            if(!string.IsNullOrWhiteSpace(executableCommand))
+            {
+                var commandArgs = commandParts[1..];
+                var processStartInfo = new ProcessStartInfo(executableCommand, commandArgs)
+                {
+                    RedirectStandardOutput = true
+                };
+
+                Process? process = Process.Start(processStartInfo);
+                if(process == null)
+                {
+                    Console.WriteLine($"{command}: error executing command");
+                    continue;
+                }
+                
+                using var processOutput = process.StandardOutput;
+                while (!processOutput.EndOfStream)
+                {
+                    Console.WriteLine(processOutput.ReadToEnd());
+                }
+                continue;
             }
 
             Console.WriteLine($"{command}: command not found");
