@@ -22,7 +22,7 @@ public class Program
 
             // READ HIS INPUT
             var (commandName, commandArgs) = ReadUserInput();
-            
+
             // EVAL
 
             // check if command is a builtin command
@@ -56,7 +56,7 @@ public class Program
 
     private static void PrintPrompt() => Console.Write("shy> ");
 
-    private static (string command, string[] args) ReadUserInput()
+    private static (string commandName, string[] commandArgs) ReadUserInput()
     {
         var userCommand = Console.ReadLine()?.Trim();
         if (string.IsNullOrWhiteSpace(userCommand))
