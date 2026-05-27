@@ -5,7 +5,7 @@ namespace Shy;
 
 public static class ExecutableProvider
 {
-    public static string? FindExecutableByName(string commandName)
+    public static string? FindExecutablePathByName(string commandName)
     {
         const string pathEnvVarName = "PATH";
         var pathEnvVar = Environment.GetEnvironmentVariable(pathEnvVarName);

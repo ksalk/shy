@@ -32,46 +32,52 @@ public class Program
             var command = promptTokens[0];
 
             // EVAL
-            var builtinCommand = BuiltinCommandsRegistry.Commands.FirstOrDefault(c => string.Equals(c.Name, command));
+            var builtinCommand = BuiltinCommandsRegistry.GetCommandByName(command);
             if (builtinCommand != null)
             {
                 var commandResult = builtinCommand.Execute(promptTokens[1..]);
 
                 if (commandResult.PostAction == PostCommandAction.ExitShell)
                     break;
-                else if(commandResult.PostAction == PostCommandAction.None)
+                else if (commandResult.PostAction == PostCommandAction.None)
                     continue;
 
                 // should not be hit
                 continue;
             }
 
-            var executableCommand = ExecutableProvider.FindExecutableByName(command);
-            if (!string.IsNullOrWhiteSpace(executableCommand))
+            var executablePath = ExecutableProvider.FindExecutablePathByName(command);
+            if (!string.IsNullOrWhiteSpace(executablePath))
             {
                 var commandArgs = promptTokens[1..];
-                var processStartInfo = new ProcessStartInfo(executableCommand, commandArgs)
-                {
-                    RedirectStandardOutput = true
-                };
+                RunProgram(command, commandArgs, executablePath);
 
-                // TODO: read up on this stuff
-                Process? process = Process.Start(processStartInfo);
-                if (process == null)
-                {
-                    Console.WriteLine($"{command}: error executing command");
-                    continue;
-                }
-
-                using var processOutput = process.StandardOutput;
-                while (!processOutput.EndOfStream)
-                {
-                    Console.WriteLine(processOutput.ReadToEnd());
-                }
                 continue;
             }
 
             Console.WriteLine($"{command}: command not found");
+        }
+    }
+
+    private static void RunProgram(string command, string[] args, string executablePath)
+    {
+        var processStartInfo = new ProcessStartInfo(executablePath, args)
+        {
+            RedirectStandardOutput = true
+        };
+
+        // TODO: read up on this stuff
+        Process? process = Process.Start(processStartInfo);
+        if (process == null)
+        {
+            Console.WriteLine($"{command}: error executing command");
+            return;
+        }
+
+        using var processOutput = process.StandardOutput;
+        while (!processOutput.EndOfStream)
+        {
+            Console.WriteLine(processOutput.ReadToEnd());
         }
     }
 }

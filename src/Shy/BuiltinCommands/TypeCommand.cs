@@ -16,16 +16,16 @@ public class TypeCommand : BuiltinCommand
 
         var command = args[0];
 
-        if(BuiltinCommandsRegistry.Commands.Any(c => c.Name.Equals(command)))
+        if(BuiltinCommandsRegistry.GetCommandByName(command) != null)
         {
             Console.WriteLine($"{command} is a shell builtin");
             return new BuiltinCommandResult(CommandExecutionResult.Success, PostCommandAction.None);
         }
 
-        var executable = ExecutableProvider.FindExecutableByName(command);
-        if(executable != null)
+        var executablePath = ExecutableProvider.FindExecutablePathByName(command);
+        if(executablePath != null)
         {
-            Console.WriteLine($"{command} is a {executable}");
+            Console.WriteLine($"{command} is a {executablePath}");
             return new BuiltinCommandResult(CommandExecutionResult.Success, PostCommandAction.None);
         }
         
