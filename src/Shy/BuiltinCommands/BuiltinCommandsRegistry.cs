@@ -1,4 +1,4 @@
-using System.Linq;
+using System;
 
 namespace Shy.BuiltinCommands;
 
@@ -15,6 +15,11 @@ public static class BuiltinCommandsRegistry
 
     public static BuiltinCommand? GetCommandByName(string name)
     {
-        return Commands.FirstOrDefault(c => string.Equals(c.Name, name));
+        foreach (var cmd in Commands)
+        {
+            if (string.Equals(cmd.Name, name, StringComparison.Ordinal))
+                return cmd;
+        }
+        return null;
     }
 }
