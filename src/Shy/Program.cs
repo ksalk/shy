@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Linq;
 using Shy.BuiltinCommands;
 
 namespace Shy;
@@ -22,7 +21,7 @@ public class Program
             // PROMPT USER
             PrintPrompt();
 
-            // READ HIS INPUT
+            // READ USER INPUT
             var (commandName, commandArgs) = ReadUserInput();
 
             // EVAL
@@ -61,15 +60,8 @@ public class Program
     private static (string commandName, string[] commandArgs) ReadUserInput()
     {
         var userCommand = Console.ReadLine()?.Trim();
-        if (string.IsNullOrWhiteSpace(userCommand))
-        {
-            return (string.Empty, []);
-        }
-
-        // TODO: tokenize command and arguments
-        var commandTokens = userCommand.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-
-        return (commandTokens[0], commandTokens[1..]);
+        var parseResult = CommandParser.Parse(userCommand);
+        return (parseResult.CommandName, parseResult.Arguments);
     }
 
     private static void RunProgram(string command, string[] args, string executablePath)
