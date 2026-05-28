@@ -8,7 +8,9 @@ public static class BuiltinCommandsRegistry
     [
         new ExitCommand(),
         new EchoCommand(),
-        new TypeCommand()
+        new TypeCommand(),
+        new PwdCommand(),
+        new CdCommand()
     ];
 
     public static BuiltinCommand? GetCommandByName(string name)

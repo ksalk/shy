@@ -11,7 +11,7 @@ public class Program
     {
         if (OperatingSystem.IsWindows())
         {
-            Console.WriteLine("Sorry, windows is not supported :(");
+            Console.WriteLine("Sorry, windows is not supported yet :(");
             return;
         }
 
@@ -103,6 +103,7 @@ public class Program
         Console.WriteLine(@"/____/_/ /_/\__, /  ");
         Console.WriteLine(@"           /____/   ");
         Console.WriteLine();
-        Console.WriteLine("Welcome to shy, a simple shell written in C#");
+        Console.WriteLine(@"Welcome to shy, a simple shell written in C#");
+        Console.WriteLine();
     }
 }
