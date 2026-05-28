@@ -15,6 +15,8 @@ public class Program
             return;
         }
 
+        PrintHelloMessage();
+
         while (true)
         {
             // PROMPT USER
@@ -90,5 +92,17 @@ public class Program
         {
             Console.WriteLine(processOutput.ReadToEnd());
         }
+    }
+
+    private static void PrintHelloMessage()
+    {
+        Console.WriteLine(@"         __         ");
+        Console.WriteLine(@"   _____/ /_  __  __");
+        Console.WriteLine(@"  / ___/ __ \/ / / /");
+        Console.WriteLine(@" /__  / / / / /_/ / ");
+        Console.WriteLine(@"/____/_/ /_/\__, /  ");
+        Console.WriteLine(@"           /____/   ");
+        Console.WriteLine();
+        Console.WriteLine("Welcome to shy, a simple shell written in C#");
     }
 }
